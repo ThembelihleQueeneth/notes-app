@@ -1,34 +1,53 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../../context/AuthContext';
+import { COLORS, globalStyles } from '../../styles/globalStyles';
 
 export default function LoginScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleLogin = () => {
+    if (email && password) {
+      login(email);
+      router.replace('/notes');
+    } else {
+      Alert.alert('Error', 'Please enter email and password');
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+    <SafeAreaView style={globalStyles.container}>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <Text style={globalStyles.title}>Welcome Back!</Text>
+        <Text style={globalStyles.subtitle}>Sign in to continue</Text>
 
-      <TextInput placeholder="Email" style={styles.input} />
-      <TextInput placeholder="Password" secureTextEntry style={styles.input} />
+        <View style={{ marginTop: 40 }}>
+          <TextInput
+            placeholder="Email Address"
+            style={globalStyles.input}
+            placeholderTextColor={COLORS.textLight}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+          />
+          <TextInput
+            placeholder="Password"
+            style={globalStyles.input}
+            placeholderTextColor={COLORS.textLight}
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity style={[globalStyles.button, { marginTop: 20 }]} onPress={handleLogin}>
+            <Text style={globalStyles.buttonText}>Login</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  button: {
-    backgroundColor: "#4CAF50",
-    padding: 15,
-    borderRadius: 8,
-  },
-  buttonText: { color: "#fff", textAlign: "center", fontWeight: "bold" },
-});
